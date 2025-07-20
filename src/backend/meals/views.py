@@ -1,4 +1,7 @@
-from django.http import JsonResponse
+from rest_framework import generics
+from .models import Meal
+from .serializers import MealSerializer
 
-def meal_list(request):
-    return JsonResponse({"message": "Meals list"})
+class MealListCreateView(generics.ListCreateAPIView):
+    queryset = Meal.objects.all().order_by('-created_at')
+    serializer_class = MealSerializer
