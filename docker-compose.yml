@@ -4,15 +4,15 @@ services:
   db:
     image: postgres:15
     container_name: calorie_db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: calorie_db
-      POSTGRES_USER: calorie_user
-      POSTGRES_PASSWORD: calorie_pass
+      POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
-
+      
   backend:
     build: ./src/backend
     container_name: calorie_backend
@@ -23,11 +23,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
-    environment:
-      - POSTGRES_DB=calorie_db
-      - POSTGRES_USER=calorie_user
-      - POSTGRES_PASSWORD=calorie_pass
-      - POSTGRES_HOST=db
+    env_file:
+      - .env
     stdin_open: true
     tty: true
 
