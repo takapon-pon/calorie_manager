@@ -17,15 +17,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0^kn8!x_xwss@4vt8fan^95@!i&u1z)plr=$kn9vo3eys)q^o*'
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = []
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', cast=bool)
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv)
 
 
 # Application definition
@@ -83,18 +77,16 @@ WSGI_APPLICATION = 'calorie_manager.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'calorie_db',
-        'USER': 'calorie_user',
-        'PASSWORD': 'calorie_pass',
-        'HOST': 'db',  # Docker,localで切り替える
-        'PORT': '5432',
+        'NAME': config('POSTGRES_DB'),
+        'USER': config('POSTGRES_USER'),
+        'PASSWORD': config('POSTGRES_PASSWORD'),
+        'HOST': config('POSTGRES_HOST'),
+        'PORT': config('POSTGRES_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
