@@ -1,10 +1,9 @@
-version: '3.8'
+version: '3.9'
 
 services:
   db:
     image: postgres:15
-    container_name: calorie_postgres
-    restart: always
+    container_name: calorie_db
     environment:
       POSTGRES_DB: calorie_db
       POSTGRES_USER: calorie_user
@@ -13,6 +12,36 @@ services:
       - "5432:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./src/backend
+    container_name: calorie_backend
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./src/backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=calorie_db
+      - POSTGRES_USER=calorie_user
+      - POSTGRES_PASSWORD=calorie_pass
+      - POSTGRES_HOST=db
+    stdin_open: true
+    tty: true
+
+  frontend:
+    build: ./src/frontend
+    container_name: calorie_frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./src/frontend:/app
+    stdin_open: true
+    tty: true
+    depends_on:
+      - backend
 
 volumes:
   db_data:

@@ -40,7 +40,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'meals',
+    'rest_framework_simplejwt',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -83,7 +90,7 @@ DATABASES = {
         'NAME': 'calorie_db',
         'USER': 'calorie_user',
         'PASSWORD': 'calorie_pass',
-        'HOST': 'localhost',  # Dockerのポートバインド先
+        'HOST': 'db',  # Docker,localで切り替える
         'PORT': '5432',
     }
 }

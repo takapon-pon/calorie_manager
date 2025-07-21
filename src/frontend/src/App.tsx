@@ -1,61 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { Meal } from './types';
+import React from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import MealPage from './pages/MealPage';
 
 const App: React.FC = () => {
-  const [meals, setMeals] = useState<Meal[]>([]);
-  const [name, setName] = useState<string>('');
-  const [calories, setCalories] = useState<number>(0);
-
-  useEffect(() => {
-    axios.get<Meal[]>('http://127.0.0.1:8000/api/meals/')
-      .then(res => setMeals(res.data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    axios.post<Meal>('http://127.0.0.1:8000/api/meals/', {
-      name,
-      calories,
-    })
-    .then(res => {
-      setMeals([res.data, ...meals]);
-      setName('');
-      setCalories(0);
-    })
-    .catch(err => console.error(err));
-  };
+  const isAuthenticated = !!localStorage.getItem('access');
 
   return (
-    <div style={{ maxWidth: '500px', margin: '0 auto' }}>
-      <h1>食事記録</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="食事名"
-          value={name}
-          onChange={e => setName(e.target.value)}
-          required
-        />
-        <input
-          type="number"
-          placeholder="カロリー"
-          value={calories}
-          onChange={e => setCalories(Number(e.target.value))}
-          required
-        />
-        <button type="submit">追加</button>
-      </form>
-
-      <ul>
-        {meals.map((meal) => (
-          <li key={meal.id}>
-            {meal.name} - {meal.calories} kcal
-          </li>
-        ))}
-      </ul>
-    </div>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/meals" element={isAuthenticated ? <MealPage /> : <Navigate to="/login" />} />
+      <Route path="*" element={<Navigate to="/meals" />} />
+    </Routes>
   );
 };
 
